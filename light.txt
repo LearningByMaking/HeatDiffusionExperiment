@@ -33,12 +33,16 @@ to ongo
  greenon mwait 1000 greenoff
 end
 
+to s-wait :n
+  repeat :n [mwait 1000]
+end
+
 to onstart
  loop [ 
         day
-	repeat 10 [read_light mwait 10000]
+	repeat 10 [light-packet s-wait 300]
 	night
-	repeat 10 [read_light mwait 10000]
+	repeat 10 [light-packet s-wait 300]
       ]
 end
 
@@ -49,11 +53,12 @@ to init
   dp4off
 end
 
-to read_light
+to light-packet
   greenon
   init-packet 61
   fprint isDay
   fprint readA3
+  add-checksum
   mwait 1000 greenoff
 end
 
@@ -71,13 +76,6 @@ to night
   blueon
 end
 
-to wdchecksum :addr :len
-let [res 0]
-repeat :len / 2 
- [ make "res :res + read :addr 
-   make "addr :addr + 2]
-output :res
-end
 
 constants [[status $202][inbuf $300][inbuf-len $301]]
 define stray-packet? [] [output (readb status) and 2]

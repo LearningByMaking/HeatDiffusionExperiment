@@ -21,11 +21,11 @@ global [baud ]
 global [freqdev freq75 freq76 freq77]
 global [isDay]
 
-to ul-ready
+to onpowerup
 ; nothing to do
 end
 
-to ul-set
+to ongo
  init
  redoff
  blueoff
@@ -33,17 +33,8 @@ to ul-set
  greenon mwait 1000 greenoff
 end
 
-to s-wait :n
-  repeat :n [mwait 1000]
-end
-
-to ul-go
- loop [ 
-        day
-	repeat 10 [light-packet s-wait 300]
-	night
-	repeat 10 [light-packet s-wait 300]
-      ]
+to onstart
+ loop [ temperature-packet mwait 30000]  ; 30000 = 30 sec (max 32,767 msec
 end
 
 to init
@@ -53,10 +44,13 @@ to init
   dp4off
 end
 
-to light-packet
+to temperature-packet
   greenon
-  init-packet 61
+  init-packet 60
   fprint isDay
+  fprint readA0
+  fprint readA1
+  fprint readA2
   fprint readA3
   add-checksum
   mwait 1000 greenoff

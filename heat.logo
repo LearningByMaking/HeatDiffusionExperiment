@@ -11,13 +11,13 @@ to heat-exp
 end
 
 to init
-  init-data
+  Xinit-data
   set-calibration
-  start-hardware
+  start-appboard
 end
 
-to init-data
-  setup-screen
+to Xinit-data
+;  setup-screen
   make "slope-list []
   make "data-list []  
   make "alpha 0.03         ; adjust constant to match simulation to real data
@@ -25,6 +25,9 @@ to init-data
   make "heat-list []
   make "real-list []
   make "start-time now       ; gets the unit time at the begining of the experiment
+
+  make "check60 0
+  make "check61 0
 end
 
 to set-calibration
@@ -34,19 +37,26 @@ to set-calibration
   make "temp3_cal [500 22.0 1000 50.0]     ; pairs (adc,temp)
 end
 
-to start-hardware
+to start-appboard
+
   talkto 19
   wait 5
-  ongo
+  ul-ready
+  ul-set
+
   talkto 20
   wait 5
-  ongo
+  ul-ready
+  ul-set
+
   talkto 19
   wait 5
-  onstart
+  ul-go
+
   talkto 20
   wait 5
-  onstart
+  ul-go
+
 end
   
 
@@ -63,7 +73,6 @@ to see-packet
     
 end
 
-
 to process-packet  
   make "type nth 1 :packet-bytes 
   print-packet  
@@ -78,12 +87,57 @@ to process-packet
   
 end
 
+to process-heat-packet
+  let [th 0]
+  let [tl 0]
+  make "oldcheck :check60
+  let [nws ((first :packet-bytes) / 2) + 2]
+  make "check60 wnth :nws :packet-bytes
+  print (se :check60 :oldcheck)
+  if not (:check60 = :oldcheck) [
+    make "type nth 1 :packet-bytes
+    make "wp packet-words :packet-bytes
+    print ( se word "T bf 100 + :type round now / 1000 :wp  )    
+    make "th wnth 2 :packet-bytes         ; timestamph from packet
+    make "tl wnth 3 :packet-bytes         ; timestampl from packet
+
+; grab values from packet
+  if (:type = 60) [
+    make "elapse round ((now - :start-time) / 1000) ; elapsed time (sec)
+    make "day-night wnth 4 :packet-bytes
+    make "temp0     wnth 5 :packet-bytes
+    make "temp1     wnth 6 :packet-bytes
+    make "temp2     wnth 7 :packet-bytes
+    make "temp3     wnth 8 :packet-bytes
+
+    make "heat-list se :heat-list :elapse
+
+    make "day-night 10 * :day-night + 5
+    make "heat-list se :heat-list :day-night
+
+    make "temp0 calibrate :temp0 :temp0_cal
+    make "temp1 calibrate :temp1 :temp1_cal
+    make "temp2 calibrate :temp2 :temp2_cal
+    make "temp3 calibrate :temp3 :temp3_cal
+
+    make "heat-list se :heat-list :temp0
+    make "heat-list se :heat-list :temp1
+    make "heat-list se :heat-list :temp2
+    make "heat-list se :heat-list :temp3
+    make "ncol 6       ;elapse, day-night, temp0, temp1, temp2, temp3
+    
+    plot-temp
+    display
+   ]
+  ]
+end
+
 to print-packet
   make "wp packet-words :packet-bytes
   print ( se word "T bf 100 + :type round now / 1000 :wp  ) 
 end
 
-to process-heat-packet
+to Xprocess-heat-packet
   print "|HEAT PACKET|
   
   make "th wnth 2 :packet-bytes         ; timestamph from packet

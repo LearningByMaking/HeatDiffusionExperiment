@@ -1297,3 +1297,304 @@ uproject "heat
   T60 1424207631 15376 65535 00390 01459 00000 00772 00685 00551 00719
   HEAT PACKET
   val-list has no value in plot-hist
+  Welcome to Logo
+
+.imnit
+  I don't know how to .imnit
+.init
+  I don't know how to .init
+uproject "heat
+  Start Project:  heat     Tue Feb 17 15:35:43 PST 2015   unix time:  1424216143967
+  Welcome to the  heat
+
+
+.init
+.heat-exp
+  starting heat experiment
+  T60 1424216180 15376 65535 00353 03794 00000 00833 00647 00563 00703
+  HEAT PACKET
+  val-list has no value in plot-hist
+.init
+.heat-exp
+  starting heat experiment
+  T60 1424216199 15376 65535 00356 04798 00000 00867 00641 00568 00705
+  HEAT PACKET
+  val-list has no value in plot-hist
+..
+  stopped.
+rr
+  rr undefined
+.rr
+  Welcome to the  heat
+  I don't know how to to in rr
+.init
+.heat-exp
+  starting heat experiment
+  T60 1424216282 15376 65535 00365 07810 00000 00927 00671 00572 00717
+  check has no value in process-heat-packet
+rr
+  rr undefined
+  Welcome to Logo
+
+.uproject "heat
+  I don't know how to .uproject
+  Welcome to Logo
+
+
+.uproject "heat
+  I don't know how to .uproject
+uproject "heat
+  Start Project:  heat     Tue Feb 17 15:50:32 PST 2015   unix time:  1424217032673
+  Welcome to the  heat
+
+.heat-exp
+  starting heat experiment
+  T60 1424217081 15376 65535 00449 04918 00000 00856 00703 00559 00736
+  736 0
+  T60 1424217081 15376 65535 00449 04918 00000 00856 00703 00559 00736
+  I don't know how to display in process-heat-packet
+  Welcome to Logo
+uproject "heat
+  Start Project:  heat     Tue Feb 17 16:26:01 PST 2015   unix time:  1424219161450
+  Welcome to the  heat
+.heat-exp
+  starting heat experiment
+  T60 1424219172 15376 65535 00666 05198 00000 00835 00703 00579 00748
+  748 0
+  T60 1424219172 15376 65535 00666 05198 00000 00835 00703 00579 00748
+  I don't know how to display in process-heat-packet
+..
+  stopped.
+.talkto 19
+.print :srcfile
+  heat.prj
+redon
+  redon undefined
+.compile
+  Compiling...
+  temperature-packet undefined in ul-go
+.compile
+  Compiling...
+  1360 bytes
+redon
+.download
+  1360 bytes
+.talkto 20
+.stopvm
+.make "srcfile "light.prj
+.compile
+  Compiling...
+  1387 bytes
+.download
+  1387 bytes
+init
+redon
+redoff
+.talkto 19
+redoff
+.heat-exp
+  starting heat experiment
+  runvm error
+  runvm error
+  runvm error
+  runvm error
+  runvm error
+  runvm error
+  T60 1424219526 15376 65535 00688 02226 00000 00837 00716 00583 00768
+  768 0
+  T60 1424219526 15376 65535 00688 02226 00000 00837 00716 00583 00768
+  I don't know how to display in process-heat-packet
+..
+  stopped.
+  Welcome to Logo
+uproject "heat
+  Start Project:  heat     Tue Feb 17 16:32:41 PST 2015   unix time:  1424219561720
+  Welcome to the  heat
+.heat-exp
+  starting heat experiment
+  runvm error
+  runvm error
+  runvm error
+  runvm error
+  runvm error
+c..
+..
+  stopped.
+  c.. undefined
+
+
+..
+  stopped.
+
+
+.talkto 19
+.stopvm
+print 1234
+  1234
+.print "srcfile
+  srcfile
+.print :srcfile
+  heat.prj
+.compile
+  Compiling...
+  1360 bytes
+.download
+  1360 bytes
+.heat-exp
+  starting heat experiment
+  runvm error
+  runvm error
+/..
+./.
+..
+  stopped.
+  I don't know how to /.
+  /.. undefined
+
+
+.talkto 20
+.make "srcfile "light.prj
+.compile
+  Compiling...
+  1387 bytes
+.download
+  1387 bytes
+print 1234
+  1234
+.talkto 19
+print 1234
+  1234
+.talkto 20
+.ul-ready
+  runvm error
+.ul-set
+.ul-ready
+  runvm error
+  runvm error
+.
+
+.onpowerup
+  runvm error
+.print rl $1fc0 10
+  10 61 255 255 177 2 40 14 1 0
+.print rl $1fc0 10
+  10 61 255 255 177 2 40 14 1 0
+.ul-set
+  runvm error
+.ongo
+  runvm error
+.talkto 20
+.make "srcfile "light.txt
+.make "srcfile "light.prj
+.compile
+  Compiling...
+  1387 bytes
+.download
+  1387 bytes
+.stopvm
+.download
+  1387 bytes
+.talkto 19
+.make "srcfile "heat.prj
+.compile
+  Compiling...
+  1360 bytes
+.stopvm
+.download
+  1360 bytes
+.heat-exp
+  starting heat experiment
+  T60 1424220302 15376 65535 00064 01046 00000 00665 00679 00579 00659
+  659 0
+  T60 1424220302 15376 65535 00064 01046 00000 00665 00679 00579 00659
+  I don't know how to display in process-heat-packet
+  Welcome to Logo
+
+uproject "heat
+  Start Project:  heat     Tue Feb 17 16:49:00 PST 2015   unix time:  1424220540046
+  Welcome to the  heat
+.heat-exp
+  starting heat experiment
+  T60 1424220553 15376 65535 00088 09078 00000 00927 00679 00595 00735
+  735 0
+  T60 1424220553 15376 65535 00088 09078 00000 00927 00679 00595 00735
+  I don't know how to display in process-heat-packet
+  Welcome to Logo
+
+uproject "heat
+  Start Project:  heat     Tue Feb 17 16:51:31 PST 2015   unix time:  1424220691375
+  Welcome to the  heat
+uproject "heat
+  uProject undefined
+.print :machine
+  1
+  Welcome to Logo
+uproject "heat
+  Start Project:  heat     Tue Feb 17 16:54:14 PST 2015   unix time:  1424220854718
+  Welcome to the  heat
+.heat-exp
+  starting heat experiment
+  T60 1424220866 15376 65535 00119 09118 00000 01004 00703 00575 00783
+  65535 0
+  T60 1424220866 15376 65535 00119 09118 00000 01004 00703 00575 00783
+  I don't know how to display in process-heat-packet
+redraw
+  redraw undefined
+.redraw
+.display
+  I don't know how to display
+  Welcome to Logo
+uproject "heat
+  Start Project:  heat     Tue Feb 17 16:58:27 PST 2015   unix time:  1424221107331
+  Welcome to the  heat
+.heat-exp
+  starting heat experiment
+  T60 1424221123 15376 65535 00147 08154 00000 01023 00719 00577 00822
+  check60 has no value in process-heat-packet
+.print :check60
+  check60 has no value
+.print :oldcheck
+  oldcheck has no value
+.init
+.print :check60
+  check60 has no value
+.print :first-time
+  first-time has no value
+.init-data
+.print :first-time
+  first-time has no value
+  Welcome to Logo
+uproject "heat
+  Start Project:  heat     Tue Feb 17 17:02:59 PST 2015   unix time:  1424221379482
+  Welcome to the  heat
+.init-data
+.print :check60
+  check60 has no value
+
+.make "check60 0
+.print :check60
+  0
+.heat-exp
+  starting heat experiment
+  T60 1424221519 15376 65535 00188 01206 00000 00831 00739 00591 00760
+  65535 0
+  T60 1424221519 15376 65535 00188 01206 00000 00831 00739 00591 00760
+  start-time has no value in process-heat-packet
+.print :slope-list
+  slope-list has no value
+
+  Welcome to Logo
+uproject "heat
+  Start Project:  heat     Tue Feb 17 17:06:52 PST 2015   unix time:  1424221612325
+  Welcome to the  heat
+.heat-exp
+  starting heat experiment
+  T60 1424221625 15376 65535 00200 05222 00000 00947 00735 00591 00783
+  65535 0
+  T60 1424221625 15376 65535 00200 05222 00000 00947 00735 00591 00783
+  java.lang.NullPointerException
+
+.print :check60
+  65535
+.print :oldcheck
+  0
