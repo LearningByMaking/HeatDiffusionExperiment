@@ -8,7 +8,7 @@ to jProject :n
   make "machine 1
 end
 
-to uProject :n
+to Project :n
   make "project-name :n
   let [sdate bl exec "date]
   print (se "|Start Project: | :n "|   | :sdate "|  unix time: | now ) 
@@ -33,6 +33,7 @@ end
 to jLogo
   make "run-ulogo false
   jLogo-dot
+  load "logo/project
   load "logo/screen
   load "logo/smplot
 end
@@ -41,6 +42,7 @@ to uLogo
   make "run-ulogo true
   sethandleline true   ; dot needed for jLogo words - with ulogo code
   print (se "|Welcome to the | :project-name)
+  load "logo/project
   load "logo/compiler
   load "logo/decompiler
   load "logo/uartcomms
@@ -48,11 +50,11 @@ to uLogo
   load "logo/smplot
   load "logo/onewire-packets
   make "onewire true
-  load "logo/project
+  load :project-name
   if not name? "inited [make "inited true compiler-startup start-comms]
   make "srcpath word dirnamefrompath first files ". "/
   make "srcfile word :project-name "|.prj|
-  ;compile ;we don't need to compile
+  compile
 end
 
 define byte0 [n][output logand :n $ff]
@@ -63,10 +65,15 @@ define .word [a b][output intern word :a :b]
 
 define rr [][load :project-name ifelse :run-ulogo [ulogo][jlogo]
 
+; ndefine rr [][load "|logo/project| ifelse :run-ulogo [ulogo][jlogo]
+
 to edit :n
-; let [m :n]
-; repeat count :n [ if ("|.| = bf :m ]
-; later add code to attach .logo if not .
+
+; check for existance of file :n, if exists editn this file
+; :n does not exist, check for :n.logo
+; :n and :n.logo does not exist, try :n.txt
+; if none exist make a new file named  :n
+
   blindexec (se "gedit :n)
 end
 
@@ -111,20 +118,22 @@ if :s = 1 [ connect ]
 if :s = 2 [ ptype 2 points ]
 
 title (se :yname "versus :xname)
-xlabel :xnam
-; ylabel :yname
-
+xlabel :xname
+; ylabel :yname         ; does not rotate string 90 degree
 end
 
 ; "|-geometry 600x400+1000+100|  example for value of :n
-to display :n
- if (:machine = 1) [ wait 10 redraw wait 10       ; Mac OSX or HPstream11
-                     blindexec (se "|./xv | :n "| screen.png|) 
+;  size 600 x 400 pixels  location  (x,y)=  (1000,100)
+;  (x,y) = (0,0) means upper left corner of screen
+;
+
+to Xdisplay
+ if (:machine = 1) [ wait 10 redraw wait 10    ; Mac OSX or HPstream11
+                     blindexec (se "|./xv | "| screen.png|) ] 
 end
 
 to clear-display
-  if (:machine = 1) [ wait 10 blindexec "|./pkill.sh xv| wait 10
-                    ]
+  if (:machine = 1) [ wait 10 blindexec "|./pkill.sh xv| wait 1 ]
 end
 
 to cUp :n

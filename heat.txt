@@ -19,7 +19,6 @@ constants [
 
 global [baud ]
 global [freqdev freq75 freq76 freq77]
-global [isDay]
 
 to onpowerup
 ; nothing to do
@@ -47,7 +46,6 @@ end
 to temperature-packet
   greenon
   init-packet 60
-  fprint isDay
   fprint readA0
   fprint readA1
   fprint readA2
@@ -55,21 +53,6 @@ to temperature-packet
   add-checksum
   mwait 1000 greenoff
 end
-
-to day
-  setisDay 1
-  dp4on
-  redon
-  blueoff
-end
-
-to night
-  setisDay 0
-  dp4off
-  redoff
-  blueon
-end
-
 
 constants [[status $202][inbuf $300][inbuf-len $301]]
 define stray-packet? [] [output (readb status) and 2]

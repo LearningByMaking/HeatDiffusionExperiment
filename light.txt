@@ -40,9 +40,9 @@ end
 to onstart
  loop [ 
         day
-	repeat 10 [light-packet s-wait 300]
+	repeat 10 [light-packet s-wait 30]
 	night
-	repeat 10 [light-packet s-wait 300]
+	repeat 10 [light-packet s-wait 30]
       ]
 end
 

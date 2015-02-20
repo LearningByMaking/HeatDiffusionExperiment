@@ -21,11 +21,11 @@ global [baud ]
 global [freqdev freq75 freq76 freq77]
 global [isDay]
 
-to ul-ready
+to onpowerup
 ; nothing to do
 end
 
-to ul-set
+to ongo
  init
  redoff
  blueoff
@@ -33,16 +33,16 @@ to ul-set
  greenon mwait 1000 greenoff
 end
 
-to s-wait :n
-  repeat :n [mwait 1000]
-end
+;to s-wait :n
+;  repeat :n [mwait 1000]
+;end
 
-to ul-go
+to onstart
  loop [ 
         day
-	repeat 10 [light-packet s-wait 300]
+	repeat 10 [light-packet mwait 30000]
 	night
-	repeat 10 [light-packet s-wait 300]
+	repeat 10 [light-packet mwait 30000]
       ]
 end
 

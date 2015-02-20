@@ -1,33 +1,38 @@
 to heat-exp
   print "|starting heat experiment|
-  init
+  init-heat
   loop [        
-	talkto 19
-        see-packet     
-        talkto 20
-        see-packet
+	talkto 19 see-packet   ;heat packet  
+        talkto 20 see-packet   ;light packet
         wait 200 
        ]
 end
 
-to init
-  Xinit-data
+to init-heat
+  init-data
   set-calibration
   start-appboard
 end
 
-to Xinit-data
-;  setup-screen
+to init-data
+  setup-screen
   make "slope-list []
   make "data-list []  
   make "alpha 0.03         ; adjust constant to match simulation to real data
   make "first-time true
   make "heat-list []
+  make "light-list []
   make "real-list []
   make "start-time now       ; gets the unit time at the begining of the experiment
-
   make "check60 0
+  make "ocheck60 0
   make "check61 0
+  make "ocheck61 0
+  make "check 0
+  make "ocheck 0
+
+  make "heat-recieved 0
+  make "light-recieved 0
 end
 
 to set-calibration
@@ -40,11 +45,13 @@ end
 to start-appboard
 
   talkto 19
+  stopvm
   wait 5
   ul-ready
   ul-set
 
   talkto 20
+  stopvm
   wait 5
   ul-ready
   ul-set
@@ -62,110 +69,111 @@ end
 
 to see-packet
    make "packet-bytes rl $1fc0 30   ; add checksum and ignore if not new
-
    if (count :packet-bytes) > 0 
 	[
              process-packet
-             ;make "ncol 6
-             ;make "data-list :heat-list
-             ;save-data "heatreal-list.txt 
+             make "ncol 7
+             make "data-list :heat-list
+             save-data "heat-list.txt 
 	]
     
 end
 
 to process-packet  
-  make "type nth 1 :packet-bytes 
-  print-packet  
-  if (:type = 60)
-  [
-    process-heat-packet
+  make "type nth 1 :packet-bytes   
+  if (:type = 60) 
+  [ 
+     make "check :check60
+     make "ocheck :ocheck60
+     process-header 
+     make "check60 :check
+     make "ocheck60 :ocheck
   ]
-  if (:type = 61)
+
+  if (:type = 61) 
+  [ 
+     make "check :check61
+     make "ocheck :ocheck61
+     process-header 
+     make "check61 :check
+     make "ocheck61 :ocheck
+  ] 
+end
+
+to process-header
+  let [th 0]
+  let [tl 0]
+  make "ocheck :check
+  let [nws ((first :packet-bytes) / 2) + 1]
+  make "check wnth :nws :packet-bytes
+  ;print (se :check :ocheck)
+  if not (:check = :ocheck) 
   [
-    process-light-packet
+    make "type nth 1 :packet-bytes
+    make "wp packet-words :packet-bytes
+    ;print ( se word "T bf 100 + :type round now / 1000 :wp  )    
+    make "th wnth 2 :packet-bytes         ; timestamph from packet
+    make "tl wnth 3 :packet-bytes         ; timestampl from packet
+    if (:type = 60) [ process-heat-packet ]
+    if (:type = 61) [ process-light-packet ]
   ]
-  
 end
 
 to process-heat-packet
-  let [th 0]
-  let [tl 0]
-  make "oldcheck :check60
-  let [nws ((first :packet-bytes) / 2) + 2]
-  make "check60 wnth :nws :packet-bytes
-  print (se :check60 :oldcheck)
-  if not (:check60 = :oldcheck) [
-    make "type nth 1 :packet-bytes
-    make "wp packet-words :packet-bytes
-    print ( se word "T bf 100 + :type round now / 1000 :wp  )    
-    make "th wnth 2 :packet-bytes         ; timestamph from packet
-    make "tl wnth 3 :packet-bytes         ; timestampl from packet
+   make "heat-recieved 1
+   print-packet 
+   make "elapse round ((now - :start-time) / 1000) ; elapsed time (sec)
+   make "temp0     wnth 4 :packet-bytes
+   make "temp1     wnth 5 :packet-bytes
+   make "temp2     wnth 6 :packet-bytes
+   make "temp3     wnth 7 :packet-bytes
 
-; grab values from packet
-  if (:type = 60) [
-    make "elapse round ((now - :start-time) / 1000) ; elapsed time (sec)
-    make "day-night wnth 4 :packet-bytes
-    make "temp0     wnth 5 :packet-bytes
-    make "temp1     wnth 6 :packet-bytes
-    make "temp2     wnth 7 :packet-bytes
-    make "temp3     wnth 8 :packet-bytes
+   make "heat-list se :heat-list :elapse
 
-    make "heat-list se :heat-list :elapse
+   make "temp0 calibrate :temp0 :temp0_cal
+   make "temp1 calibrate :temp1 :temp1_cal
+   make "temp2 calibrate :temp2 :temp2_cal
+   make "temp3 calibrate :temp3 :temp3_cal
 
-    make "day-night 10 * :day-night + 5
-    make "heat-list se :heat-list :day-night
+   add-heat :temp0
+   add-heat :temp1
+   add-heat :temp2
+   add-heat :temp3 
+  
+end
 
-    make "temp0 calibrate :temp0 :temp0_cal
-    make "temp1 calibrate :temp1 :temp1_cal
-    make "temp2 calibrate :temp2 :temp2_cal
-    make "temp3 calibrate :temp3 :temp3_cal
 
-    make "heat-list se :heat-list :temp0
-    make "heat-list se :heat-list :temp1
-    make "heat-list se :heat-list :temp2
-    make "heat-list se :heat-list :temp3
-    make "ncol 6       ;elapse, day-night, temp0, temp1, temp2, temp3
-    
-    plot-temp
-    display
+to process-light-packet
+   make "light-recieved 1
+   print-packet 
+   make "day-night wnth 4 :packet-bytes
+   make "day-night 10 * :day-night + 5
+   make "light wnth 5 :packet-bytes
+   make "light :light / 10 - 20
+   add-heat :day-night
+   add-heat :light
+   
+   make "ncol 7      ;elapse, temp0, temp1, temp2, temp3, day-night, light
+   data-recieved
+end
+
+to data-recieved
+   if(:light-recieved = 1)
+   [
+     if(:heat-recieved = 1)
+     [ 
+       plot-data
+       wait 5
+       display "|-geometry 400x300+900+50|
+     ]
    ]
-  ]
+  make "heat-recieved 0
+  make "light-recieved 0
 end
 
 to print-packet
   make "wp packet-words :packet-bytes
   print ( se word "T bf 100 + :type round now / 1000 :wp  ) 
-end
-
-to Xprocess-heat-packet
-  print "|HEAT PACKET|
-  
-  make "th wnth 2 :packet-bytes         ; timestamph from packet
-  make "tl wnth 3 :packet-bytes         ; timestampl from packet
-
-  make "elapse round ((now - :start-time) / 1000) ; elapsed time (sec)
-  make "day-night wnth 4 :packet-bytes
-  make "temp0     wnth 5 :packet-bytes
-  make "temp1     wnth 6 :packet-bytes
-  make "temp2     wnth 7 :packet-bytes
-  make "temp3     wnth 8 :packet-bytes
-
-  make "heat-list se :heat-list :elapse
-
-  make "day-night 10 * :day-night + 5
-  make "heat-list se :heat-list :day-night
-
-  make "temp0 calibrate :temp0 :temp0_cal
-  make "temp1 calibrate :temp1 :temp1_cal
-  make "temp2 calibrate :temp2 :temp2_cal
-  make "temp3 calibrate :temp3 :temp3_cal
-
-  make "heat-list se :heat-list :temp0
-  make "heat-list se :heat-list :temp1
-  make "heat-list se :heat-list :temp2
-  make "heat-list se :heat-list :temp3
-  make "ncol 6       ;elapse, day-night, temp0, temp1, temp2, temp3 
-  plot-hist
 end
 
 to calibrate :n :m
@@ -177,53 +185,11 @@ to calibrate :n :m
   output  ((:n - :adc0) * :slope) + :val0
 end
 
-to process-light-packet
- print "|LIGHT PACKET|
-end
-
-
-
-
-to plot-hist
-ltype 1      ; black white lines
-ptype 2      ; circles
-clean
-
-make "xcol-data :val-list
-make "savexupper xupper
-
-make "savexlower xlower
-make "binsize (:savexupper - :savexlower) / 50
-
-bin :savexlower :savexupper :binsize    ;builds bins in "xcol-data
-hist :avg-list
-limits :savexlower :savexupper 0.0 yupper  ;builds count in "ycol-data
-grid 10 10
-box
-xaxis 10 1
-yaxis 10 1
-
-blue histogram
-hist :val-list
-
-let [cnt 0]
-repeat count :ycol-data [
-     setnth :cnt :ycol-data (nth :cnt :ycol-data) / 9
-     make "cnt :cnt + 1
-     ]
-red histogram
-
-title "|Histogram of Noise|
-xlabel "|10X Temperature (deg C)|
-ylabel "Count
-
-end
-
-to plot-temp
+to plot-data
 ltype 1      ; black white lines
 ptype 2      ; circles
 
-make "ncol 6
+make "ncol 7
 make "data-list :heat-list
 xcol 1
 ycol 3
@@ -243,33 +209,42 @@ ylabel "Temp
 red
 histogram
 
-make "ncol 6
+make "ncol 7
 make "data-list :heat-list
 xcol 1
 ycol 4
 green
 histogram
 
-make "ncol 6
+make "ncol 7
 make "data-list :heat-list
 xcol 1
 ycol 5
 cyan
 histogram
 
-make "ncol 6
+make "ncol 7
 make "data-list :heat-list
 xcol 1
 ycol 6
 magenta
 histogram
 
-make "ncol 6
+make "ncol 7
 make "data-list :heat-list
 xcol 1
 ycol 2
 blue 
 histogram
+
+make "ncol 7
+make "data-list :heat-list
+xcol 1
+ycol 7
+black 
+histogram
+
+
 rel 1.05 * :last 15 label "Day
 rel 1.05 * :last  5 label "Night
 
@@ -295,24 +270,11 @@ rel 1.05 * :last  5 label "Night
       rel 1.05 * :last 65 label "Rise
       rel 1.05 * :last 55  label "Fall
       ]
+
+redraw
 end
 
 
-
-to init-packet
-make "packet-bytes []
-end
-
-to packet-time :n :m
-output (10 * :n) + (:m / 1000)
-end
-
-to show-packet
-let [d :data-list]
-repeat (count :d) 
-  [ print nth 0 :d
-    make "d bf :d ]
-end
 
 to packet-words :l           ; this version leaves off the checksum
   let [res []]
@@ -322,14 +284,13 @@ to packet-words :l           ; this version leaves off the checksum
   output :res
 end
 
-to word-list :l
-  let [res []]
-  dotimes [i (wnth 0 :l) / 2][make "res se :res wnth :i + 1 :l]
-  output :res
-end
 
 to wnth :i :l
   output (nth 2 * :i :l) + 256 * (nth 2 * :i + 1 :l)
+end
+
+to add-heat :value
+ make "heat-list se :heat-list :value	
 end
 
 

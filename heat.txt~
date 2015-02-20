@@ -21,11 +21,11 @@ global [baud ]
 global [freqdev freq75 freq76 freq77]
 global [isDay]
 
-to ul-ready
+to onpowerup
 ; nothing to do
 end
 
-to ul-set
+to ongo
  init
  redoff
  blueoff
@@ -33,7 +33,7 @@ to ul-set
  greenon mwait 1000 greenoff
 end
 
-to ul-go
+to onstart
  loop [ temperature-packet mwait 30000]  ; 30000 = 30 sec (max 32,767 msec
 end
 

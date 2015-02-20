@@ -1,10 +1,19 @@
 ;#############################################
 ;   DATA HANDLING
 ;#############################################
-to save-xycol :n
+
+to display :n
+ if (:machine = 1) [ ; Mac OSX or HPstream11
+                     blindexec (se "|./xv | :n "| screen.png|) 
+                   ]
+end
+
+
+to save-xycol :n	
   let [dx :xcol-data]
   let [dy :ycol-data]
   prfopen :n
+
   repeat (count :dx) 
     [ prfprint se nth 0 :dx nth 0 :dy
       make "dx bf :dx 
